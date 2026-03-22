@@ -220,9 +220,6 @@ h1{font-family:var(--display);font-size:clamp(20px,3.5vw,32px);font-weight:800;l
 .auto-recalc-bar input{accent-color:var(--accent)}
 
 /* ── Circuit description field ── */
-.circuit-desc{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--sans);font-size:13px;padding:8px 10px;margin-bottom:12px;transition:border-color .15s}
-.circuit-desc:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-.circuit-desc::placeholder{color:var(--muted)}
 
 /* ── Sticky Summary Bar ── */
 .sticky-summary{display:none;position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 16px;margin:-16px -16px 16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -524,7 +521,7 @@ table.szT tbody tr:hover td{background:rgba(232,168,56,.04)}
   body { background:#ffffff !important; background-image:none !important; color:#1a1a2e !important; font-family:'Lora',Georgia,serif; font-size:9pt; line-height:1.5; }
   body::before, body::after { display:none !important; }
   html { background:#ffffff !important; }
-  .wrapper, header, .layout, .card, .results-col, .results-col > *, .modal-overlay, .mode-bar, .save-bar, .circuit-desc, .sticky-summary, .oneline, .coord-banner, #harmonic-banner, #loadtype-banner, #empty-card { display:none !important; }
+  .wrapper, header, .layout, .card, .results-col, .results-col > *, .modal-overlay, .mode-bar, .save-bar, .sticky-summary, .oneline, .coord-banner, #harmonic-banner, #loadtype-banner, #empty-card { display:none !important; }
   #pdf-report { display:block !important; max-width:100%; padding:0; margin:0; background:#ffffff !important; }
   .rpt { background:#ffffff !important; }
 }
@@ -2061,7 +2058,6 @@ table.szT tbody tr:hover td{background:rgba(232,168,56,.04)}
   </div><!-- /res-content -->
 </div><!-- /results-col -->
 </div><!-- /layout -->
-</div><!-- /wrapper -->
 
 <script>
 // ═══════════════════ DATA TABLES ═══════════════════
@@ -4461,11 +4457,11 @@ function buildReport() {
   var insEl=document.getElementById('ins');var insLabel=insEl?insEl.options[insEl.selectedIndex].text:'';
   var installEl=document.getElementById('install');var installLabel=installEl?installEl.options[installEl.selectedIndex].text:'';
   var coresDesc=s.cores==='multi'?'Multicore':'Single-core';
-  var circuitDesc=document.getElementById('circuit-desc')?.value||'';
+  var circuitDesc='';
   var logoHtml=_userLogoDataURL?'<img src="'+_userLogoDataURL+'" class="rpt-logo-img" alt="Logo">':'';
   var html='<div class="rpt">';
   // Title
-  html+='<div class="rpt-title-bar"><h1>Cable Sizing Report</h1><p class="rpt-std">AS/NZS 3008.1.1:2025</p>'+logoHtml+'</div>';
+  html+='<div class="rpt-title-bar"><h2 style="margin:0 0 2px;font-family:Syne,Lora,sans-serif;font-size:16pt;font-weight:700;letter-spacing:-0.3pt;color:#2bb5a0">Cable Sizing Report</h2><p class="rpt-std">AS/NZS 3008.1.1:2025</p>'+logoHtml+'</div>';
   // Project info
   var pr='';
   if(p.name&&p.name!=='\u2014') pr+=row('Project / site name',p.name);
@@ -4823,7 +4819,7 @@ function updateOneLineDiagram() {
   const el = document.getElementById('oneline-diagram');
   if(!el || !_calcState) return;
   const s=_calcState, rec=s.rows.find(r=>r.pass)||s.rows[s.rows.length-1];
-  const desc = document.getElementById('circuit-desc')?.value||'';
+  const desc = '';
   const par = s.useParallel&&s.nParallel>1 ? s.nParallel+'×' : '';
   const dev = s.devRating+'A '+(s.devType||'').replace(/_/g,' ');
   const cable = par+rec.size+'mm² '+(s.cond==='Cu'?'Cu':'Al');
@@ -4900,7 +4896,7 @@ function highlightDiffs() {
 // ── 9. Save/Load (localStorage) ──
 function saveCalc() {
   if(!_calcState) { alert('Run a calculation first.'); return; }
-  const desc = document.getElementById('circuit-desc')?.value||'';
+  const desc = '';
   const projName = document.getElementById('proj-name')?.value||'';
   const name = prompt('Save as:', projName||desc||'Circuit '+new Date().toLocaleTimeString());
   if(!name) return;
@@ -4910,7 +4906,7 @@ function saveCalc() {
   ['load-val','vd-pct','length','voltage','pf','psc','z-source-manual','psc-manual',
    'voltage-preset','ins','install','earth-size','bunch-type','n-circ','air-temp',
    'soil-temp','depth','soil-res','ug-circ','ug-space','dev-type','dev-rating',
-   'n-cores','load-type','vd-method','circuit-desc',
+   'n-cores','load-type','vd-method',
    // Protection device brands & settings
    'mcb-brand','dc-mcb-brand','mccb-brand','mccb-trip-unit','mccb-ir','mccb-isd',
    'mccb-ii','mccb-ig','mccb-icu','mccb-poles',
@@ -5035,7 +5031,7 @@ document.addEventListener('DOMContentLoaded', refreshSavedList);
 // ── 10. Export CSV ──
 function exportCSV() {
   if(!_calcState) { alert('Run a calculation first.'); return; }
-  const s=_calcState, desc=document.getElementById('circuit-desc')?.value||'';
+  const s=_calcState, desc='';
   let csv='AS/NZS 3008:2025 Cable Sizing - SparkyCalc\n';
   if(desc) csv+='Circuit: '+desc+'\n';
   csv+=s.supply+' '+s.V+'V | '+s.loadA.toFixed(1)+'A | '+s.length+'m | MaxVD: '+s.vdMaxPct+'% | CF: '+s.totalDF.toFixed(3)+'\n\n';
